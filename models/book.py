@@ -8,7 +8,7 @@ class Book(db.Model):
     id = db.Column(db.String(), primary_key=True, default=str(generate_uuid()))
     title = db.Column(db.String(100), nullable=False)
     author = db.Column(db.String(100), nullable=False)
-    isbn = db.Column(db.Integer, nullable=False)
+    isbn = db.Column(db.Integer, nullable=False, unique=True)
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 

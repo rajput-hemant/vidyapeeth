@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 
+from lib.schemas import BookSchema
 from models.book import Book
 
 book = Blueprint("book", __name__)
@@ -13,6 +14,7 @@ def get_all_books():
     """
 
     books = Book.get_all_books()
+    books = BookSchema().dump(books, many=True)
 
     return (
         jsonify(
@@ -46,6 +48,7 @@ def create_book():
     # TODO: validate data
 
     book = Book(title, author, int(isbn), float(price), int(quantity)).create()
+    book = BookSchema().dump(book)
 
     return (
         jsonify(
@@ -95,6 +98,8 @@ def update_book(id):
 
     book.update()
 
+    book = BookSchema().dump(book)
+
     return (
         jsonify(
             {
@@ -139,35 +144,37 @@ def delete_book(id):
     )
 
 
-@book.get("/<id>")
-def get_book_by_id(id):
-    """
-    Get a book by id
-    """
+# @book.get("/<id>")
+# def get_book_by_id(id):
+#     """
+#     Get a book by id
+#     """
 
-    book = Book.get_book_by_id(id)
+#     book = Book.get_book_by_id(id)
 
-    if book is None:
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "message": "book not found",
-                }
-            ),
-            404,
-        )
+#     if book is None:
+#         return (
+#             jsonify(
+#                 {
+#                     "status": "error",
+#                     "message": "book not found",
+#                 }
+#             ),
+#             404,
+#         )
 
-    return (
-        jsonify(
-            {
-                "status": "success",
-                "message": "book retrieved successfully",
-                "data": book,
-            }
-        ),
-        200,
-    )
+#     book = BookSchema().dump(book)
+
+#     return (
+#         jsonify(
+#             {
+#                 "status": "success",
+#                 "message": "book retrieved successfully",
+#                 "data": book,
+#             }
+#         ),
+#         200,
+#     )
 
 
 @book.get("/<isbn>")
@@ -188,6 +195,8 @@ def get_book_by_isbn(isbn):
             ),
             404,
         )
+
+    book = BookSchema().dump(book)
 
     return (
         jsonify(
