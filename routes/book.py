@@ -113,6 +113,7 @@ def update_book(id):
 
 
 @book.delete("/delete/<id>")
+@jwt_required()
 def delete_book(id):
     """
     Delete a book

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from lib.extensions import db
@@ -56,4 +58,20 @@ class User(db.Model):
         Delete the User model
         """
         db.session.delete(self)
+        db.session.commit()
+
+
+class TokenBlocklist(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    jti = db.Column(db.String(), nullable=True)
+    create_at = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Token {self.jti}>"
+
+    def __init__(self, jti: str):
+        self.jti = jti
+
+    def save(self):
+        db.session.add(self)
         db.session.commit()

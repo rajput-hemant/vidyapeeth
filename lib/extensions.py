@@ -2,6 +2,8 @@ from flask import jsonify
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
 
+from models.user import TokenBlocklist
+
 # -----------------------------------------------------------------------------------------------
 # DB Extensions
 # -----------------------------------------------------------------------------------------------
@@ -93,3 +95,12 @@ def unauthorized_callback(error):
         ),
         401,
     )  # Unauthorized
+
+
+@jwt.token_in_blocklist_loader
+def token_in_blocklist_callback(jwt_headers, jwt_data):
+    jti = jwt_data["jti"]
+
+    token = db.session.query(TokenBlocklist).filter(TokenBlocklist.jti == jti).scalar()
+
+    return token is not None
